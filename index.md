@@ -1,6 +1,6 @@
 # Welcome to My Portfolio Hello! My name is [Saucyjack233].
 ## Projects
-- Project 1: Security measures for various scenarios website: 
+- [Security Measures Advisor](security-advisor.html) — Interactive, scenario-based security recommendations weighted by efficiency, feasibility, and ethical fit.
 - Project 2: Description
 - Project 3: 
 ## About Me

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f0">
+  <title>Good Sense — Security, with context</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f5f5f0;
+      --white: #fff;
+      --ink: #20291f;
+      --muted: #727a70;
+      --line: #e8e9e1;
+      --green: #d3f36b;
+      --green-dark: #3c5d23;
+      --forest: #263e31;
+      --lime-pale: #f1f8df;
+      --amber: #f6e3bc;
+      --blue: #dbeaf0;
+      --pink: #f3e0dc;
+      --shadow: 0 12px 38px rgba(38, 50, 35, .055);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 14px;
+      -webkit-font-smoothing: antialiased;
+    }
+    button, input { font: inherit; }
+    button:focus-visible, input:focus-visible, a:focus-visible {
+      outline: 3px solid #799b3a;
+      outline-offset: 3px;
+    }
+    .topbar {
+      height: 72px;
+      padding: 0 max(32px, calc((100vw - 1240px) / 2));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e8e9e2;
+      background: rgba(255, 255, 255, .55);
+    }
+    .brand { display: flex; align-items: center; gap: 10px; font-weight: 750; letter-spacing: -.4px; font-size: 17px; }
+    .brand-mark {
+      width: 29px; height: 29px; border-radius: 9px; background: var(--forest);
+      display: grid; place-items: center; color: var(--green); font-size: 16px;
+    }
+    .brand small { color: #8d948b; font-size: 10px; font-weight: 600; letter-spacing: .2px; margin-left: 2px; }
+    .nav-right { display: flex; align-items: center; gap: 20px; color: var(--muted); font-size: 12px; }
+    .guide-link { color: inherit; text-decoration: none; }
+    .guide-link:hover { color: var(--ink); }
+    .status-pill { border: 1px solid #e5e8dc; border-radius: 99px; padding: 7px 11px; background: #fff; color: #5b6654; }
+    .status-pill span { display: inline-block; width: 7px; height: 7px; background: #80aa42; border-radius: 50%; margin-right: 6px; }
+    main { max-width: 1240px; margin: auto; padding: 0 32px 64px; }
+    .hero { padding: 43px 0 27px; display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+    .eyebrow { margin: 0 0 11px; color: #68784d; font-size: 10px; font-weight: 750; letter-spacing: 1.7px; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(29px, 4vw, 41px); line-height: 1.12; letter-spacing: -1.8px; font-weight: 680; }
+    .hero p { margin: 11px 0 0; color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 515px; }
+    .hero-note { display: flex; align-items: center; gap: 11px; padding: 11px 14px; border: 1px solid #e4e8d8; border-radius: 12px; background: #fbfcf6; color: #67705f; font-size: 11px; line-height: 1.45; flex-shrink: 0; }
+    .hero-note-icon { width: 29px; height: 29px; display: grid; place-items: center; background: var(--lime-pale); border-radius: 9px; font-size: 15px; }
+    .layout { display: grid; grid-template-columns: 330px minmax(0, 1fr); gap: 19px; align-items: start; }
+    .panel { background: var(--white); border: 1px solid #e9eae4; border-radius: 16px; box-shadow: var(--shadow); }
+    .left-panel { padding: 22px 20px 19px; }
+    .section-heading { display: flex; align-items: center; justify-content: space-between; margin-bottom: 15px; }
+    .section-heading h2 { font-size: 14px; margin: 0; letter-spacing: -.2px; font-weight: 700; }
+    .step { color: #8b9187; font-size: 10px; letter-spacing: .7px; text-transform: uppercase; }
+    .scenario-list { display: grid; gap: 8px; }
+    .scenario {
+      appearance: none; text-align: left; cursor: pointer; width: 100%; min-height: 65px;
+      padding: 11px 11px; border-radius: 11px; background: #fff; border: 1px solid var(--line);
+      color: var(--ink); display: flex; align-items: center; gap: 11px; transition: border-color .18s, background .18s, transform .18s;
+    }
+    .scenario:hover { border-color: #c4d19f; transform: translateY(-1px); }
+    .scenario[aria-pressed="true"] { background: #f5f9e9; border-color: #9eb76d; box-shadow: inset 0 0 0 1px #dce9bf; }
+    .scenario-icon { display: grid; place-items: center; width: 35px; height: 35px; border-radius: 10px; background: #f2f3ee; font-size: 17px; flex-shrink: 0; }
+    .scenario[aria-pressed="true"] .scenario-icon { background: #e9f2d3; }
+    .scenario-copy { min-width: 0; }
+    .scenario-copy strong { display: block; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .scenario-copy small { color: var(--muted); font-size: 10px; line-height: 1.4; }
+    .select-arrow { margin-left: auto; color: #a2a89d; font-size: 17px; }
+    .divider { height: 1px; background: var(--line); margin: 21px 0 19px; }
+    .priority-intro { margin: -6px 0 15px; color: var(--muted); font-size: 11px; line-height: 1.5; }
+    .priority { margin: 0 0 16px; }
+    .priority:last-of-type { margin-bottom: 12px; }
+    .priority-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+    .priority-name { font-size: 11px; font-weight: 650; }
+    .priority-value { font-size: 10px; color: #768065; min-width: 47px; text-align: right; }
+    .range-row { display: flex; align-items: center; gap: 9px; color: #969c91; font-size: 9px; }
+    input[type="range"] { appearance: none; width: 100%; height: 4px; border-radius: 5px; background: linear-gradient(to right, #8ead52 0%, #8ead52 50%, #e7e9e1 50%, #e7e9e1 100%); cursor: pointer; }
+    input[type="range"]::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border: 2px solid white; border-radius: 50%; background: #73913d; box-shadow: 0 0 0 1px #73913d, 0 1px 4px #7778; }
+    input[type="range"]::-moz-range-thumb { width: 11px; height: 11px; border: 2px solid white; border-radius: 50%; background: #73913d; box-shadow: 0 0 0 1px #73913d, 0 1px 4px #7778; }
+    .reset-button { border: 0; padding: 4px 0; background: transparent; color: #75875a; font-size: 10px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+    .right-column { min-width: 0; }
+    .context-card { padding: 18px 21px 16px; margin-bottom: 13px; }
+    .context-top { display: flex; justify-content: space-between; align-items: center; gap: 18px; }
+    .context-label { color: #85906f; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px; margin-bottom: 6px; }
+    .context-card h2 { margin: 0; font-size: 18px; letter-spacing: -.55px; font-weight: 690; }
+    .risk-chip { white-space: nowrap; padding: 7px 10px; border-radius: 99px; background: #fbf0da; color: #886b36; font-size: 10px; font-weight: 650; }
+    .context-description { color: var(--muted); margin: 9px 0 0; line-height: 1.55; font-size: 11px; max-width: 660px; }
+    .results-heading { display: flex; align-items: center; justify-content: space-between; margin: 20px 2px 10px; }
+    .results-heading h2 { margin: 0; font-size: 13px; letter-spacing: -.1px; }
+    .results-heading p { margin: 0; color: #898f85; font-size: 10px; }
+    .result-list { display: grid; gap: 10px; }
+    .recommendation { padding: 16px 18px 13px; position: relative; overflow: hidden; }
+    .recommendation.top-choice { border-color: #b6ca83; box-shadow: 0 8px 28px rgba(63, 85, 36, .09); }
+    .recommendation.top-choice::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: #99b957; }
+    .rec-head { display: flex; align-items: flex-start; gap: 13px; }
+    .rank-number { width: 30px; height: 30px; display: grid; place-items: center; background: #f2f3ee; color: #697262; border-radius: 9px; font-size: 11px; font-weight: 700; flex-shrink: 0; }
+    .top-choice .rank-number { background: var(--green); color: #34452b; }
+    .rec-title-wrap { flex: 1; min-width: 0; }
+    .rec-title { font-size: 13px; font-weight: 700; margin: 2px 0 4px; letter-spacing: -.15px; }
+    .rec-description { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+    .score { min-width: 64px; text-align: right; }
+    .score strong { display: block; font-size: 17px; letter-spacing: -.7px; }
+    .score span { color: #8a9085; font-size: 9px; }
+    .top-label { display: inline-block; margin: 10px 0 1px 43px; border-radius: 99px; padding: 4px 8px; background: #eff6de; color: #59713a; font-size: 9px; font-weight: 700; }
+    .factor-row { display: flex; align-items: center; gap: 9px; margin: 14px 0 0 43px; }
+    .factor { flex: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
+    .factor-label { font-size: 9px; color: #858c81; white-space: nowrap; }
+    .factor-track { height: 4px; background: #eceee8; border-radius: 5px; flex: 1; min-width: 17px; overflow: hidden; }
+    .factor-fill { height: 100%; border-radius: inherit; background: #a5bd71; }
+    .factor:nth-child(2) .factor-fill { background: #85ac9a; }
+    .factor:nth-child(3) .factor-fill { background: #d7b66e; }
+    .factor-value { width: 12px; font-size: 9px; color: #626a5e; text-align: right; }
+    .rec-footer { border-top: 1px solid #f0f1eb; padding-top: 9px; margin: 13px 0 0 43px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .effort { font-size: 9px; color: #82897e; }
+    .effort strong { color: #525b4e; font-weight: 650; }
+    .details-button { padding: 3px 0; border: 0; background: transparent; color: #647b40; font-size: 10px; font-weight: 650; cursor: pointer; }
+    .details-button:hover { color: #38521e; text-decoration: underline; text-underline-offset: 3px; }
+    .details { display: none; margin: 11px 0 0 43px; padding: 11px 12px; background: #f8f9f5; border-radius: 9px; color: #62695f; font-size: 10px; line-height: 1.6; }
+    .details.open { display: block; }
+    .details strong { color: #3c4738; }
+    .details p { margin: 0 0 7px; }
+    .details p:last-child { margin-bottom: 0; }
+    .method-note { margin-top: 14px; padding: 11px 13px; display: flex; gap: 9px; color: #737a70; font-size: 10px; line-height: 1.5; }
+    .method-icon { color: #85995e; flex-shrink: 0; }
+    .method-note strong { color: #4f5949; }
+    .footer { display: flex; justify-content: space-between; padding: 17px 2px 0; color: #949a90; font-size: 9px; }
+    @media (max-width: 850px) {
+      main { padding-left: 22px; padding-right: 22px; }
+      .topbar { padding-left: 22px; padding-right: 22px; }
+      .layout { grid-template-columns: 280px minmax(0, 1fr); gap: 13px; }
+      .left-panel { padding: 18px 15px; }
+      .context-card { padding-left: 16px; padding-right: 16px; }
+      .recommendation { padding-left: 14px; padding-right: 14px; }
+      .factor-row { gap: 5px; }
+      .factor-label { font-size: 8px; }
+    }
+    @media (max-width: 650px) {
+      main { padding: 0 16px 40px; }
+      .topbar { height: 62px; padding: 0 16px; }
+      .nav-right { gap: 10px; }
+      .guide-link { display: none; }
+      .hero { padding: 31px 0 21px; display: block; }
+      .hero-note { display: inline-flex; margin-top: 15px; }
+      .layout { grid-template-columns: 1fr; }
+      .scenario-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .scenario { min-height: 74px; padding: 9px; gap: 8px; }
+      .scenario-icon { width: 31px; height: 31px; }
+      .scenario-copy strong { font-size: 11px; }
+      .scenario-copy small { font-size: 9px; }
+      .select-arrow { display: none; }
+      .left-panel { padding: 17px; }
+      .priority-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 11px; }
+      .priority { margin-bottom: 0; }
+      .priority-head { align-items: flex-start; gap: 3px; flex-direction: column; margin-bottom: 7px; }
+      .priority-value { text-align: left; }
+      .range-row { gap: 5px; font-size: 8px; }
+      .divider { margin: 16px 0 14px; }
+    }
+    @media (max-width: 400px) {
+      .scenario-list { grid-template-columns: 1fr; }
+      .scenario { min-height: 60px; }
+      .risk-chip { font-size: 9px; padding: 6px 8px; }
+      .factor-row { margin-left: 0; flex-wrap: wrap; }
+      .factor { min-width: 29%; }
+      .top-label, .rec-footer, .details { margin-left: 0; }
+      .factor-label { font-size: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Good Sense home" style="text-decoration:none;color:inherit">
+      <span class="brand-mark" aria-hidden="true">✳</span>
+      <span>good sense <small>SECURITY ADVISOR</small></span>
+    </a>
+    <nav class="nav-right" aria-label="Main navigation">
+      <a class="guide-link" href="#how-it-works">How recommendations work</a>
+      <span class="status-pill"><span></span>Practical by design</span>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">A little more clarity. A lot more confidence.</p>
+        <h1>Security, with context.</h1>
+        <p>Find a sensible next step for the situation you’re in — balancing what works, what’s realistic, and what respects the people involved.</p>
+      </div>
+      <div class="hero-note"><span class="hero-note-icon" aria-hidden="true">✦</span><span>Independent guidance<br>Not a substitute for incident response</span></div>
+    </section>
+
+    <div class="layout">
+      <aside class="panel left-panel" aria-label="Recommendation preferences">
+        <div class="section-heading">
+          <h2>What’s going on?</h2><span class="step">01 — SCENARIO</span>
+        </div>
+        <div class="scenario-list" id="scenario-list" role="group" aria-label="Choose a security scenario"></div>
+
+        <div class="divider"></div>
+
+        <div class="section-heading">
+          <h2>Your priorities</h2><span class="step">02 — WEIGHT</span>
+        </div>
+        <p class="priority-intro">Adjust what matters most. We’ll reorder the options to match.</p>
+        <div class="priority-grid">
+          <div class="priority">
+            <div class="priority-head"><label class="priority-name" for="efficiency">Efficiency</label><span class="priority-value" id="efficiency-value">High</span></div>
+            <div class="range-row"><span>Less</span><input id="efficiency" type="range" min="1" max="5" value="4" aria-label="Efficiency priority"><span>More</span></div>
+          </div>
+          <div class="priority">
+            <div class="priority-head"><label class="priority-name" for="feasibility">Feasibility</label><span class="priority-value" id="feasibility-value">High</span></div>
+            <div class="range-row"><span>Less</span><input id="feasibility" type="range" min="1" max="5" value="4" aria-label="Feasibility priority"><span>More</span></div>
+          </div>
+          <div class="priority">
+            <div class="priority-head"><label class="priority-name" for="ethics">Ethical fit</label><span class="priority-value" id="ethics-value">High</span></div>
+            <div class="range-row"><span>Less</span><input id="ethics" type="range" min="1" max="5" value="5" aria-label="Ethical impact priority"><span>More</span></div>
+          </div>
+        </div>
+        <button class="reset-button" id="reset-button" type="button">Reset priorities</button>
+      </aside>
+
+      <section class="right-column" aria-live="polite" aria-atomic="false">
+        <div class="panel context-card">
+          <div class="context-top">
+            <div><div class="context-label">Your situation</div><h2 id="scenario-title"></h2></div>
+            <span class="risk-chip" id="risk-chip"></span>
+          </div>
+          <p class="context-description" id="scenario-description"></p>
+        </div>
+        <div class="results-heading">
+          <h2>Recommended next steps</h2>
+          <p id="sort-caption">Ranked by your priorities</p>
+        </div>
+        <div class="result-list" id="recommendations"></div>
+        <div class="panel method-note" id="how-it-works">
+          <span class="method-icon" aria-hidden="true">ⓘ</span>
+          <span><strong>How this ranking works.</strong> Each option is scored from 1–5 for effectiveness, practical feasibility, and ethical fit (proportionate, privacy-conscious, and fair). Scores are weighted by your sliders. Use this as a starting point; your organization’s policies and local laws still apply.</span>
+        </div>
+        <div class="footer"><span>GOOD SENSE · THOUGHTFUL SECURITY</span><span>Scores are directional, not guarantees.</span></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const scenarios = [
+      {
+        id: "lost-device", icon: "💻", label: "Lost work device", short: "Laptop or phone is missing",
+        title: "A work device is missing",
+        risk: "Act promptly · Contain access",
+        description: "A company laptop or phone may be lost or stolen, and it could contain work data or active account sessions. Start with the steps that limit access, then follow your organization’s incident process.",
+        recommendations: [
+          { title: "Report it and remotely lock or wipe the device", description: "Contact your IT or security team now. Have them revoke sessions and use approved device-management tools to lock or erase it.", efficiency: 5, feasibility: 4, ethics: 5, effort: "Low effort · Immediate", why: "Fast containment can reduce the chance of someone accessing work accounts or data. IT can select a targeted response based on whether the device is managed and backed up.", ethicsNote: "A remote wipe can erase personal data on a mixed-use device. Ask IT to use a work-profile wipe or lock when possible, and confirm what data will be removed.", steps: "Call your IT/security contact, share the last known location and time, and ask them to revoke active sessions, lock the device, and assess whether a wipe is necessary." },
+          { title: "Revoke sign-ins and change exposed credentials", description: "From a trusted device, sign out the missing device from key accounts and update credentials if they may have been saved locally.", efficiency: 4, feasibility: 5, ethics: 5, effort: "Low effort · 10–20 min", why: "Closing active sessions and protecting accounts helps limit exposure even if the device cannot be recovered quickly.", ethicsNote: "This is a narrowly targeted action with little impact on other people. Use the approved account recovery flow and a unique password.", steps: "Prioritize your work email, identity provider, password manager, and any accounts where the missing device was a trusted sign-in." },
+          { title: "Preserve the facts and assess what data was at risk", description: "Note when and where it went missing, whether it was locked, and which work apps or files were accessible. Share this privately with IT.", efficiency: 3, feasibility: 5, ethics: 5, effort: "Low effort · 10 min", why: "A concise timeline helps responders choose a proportionate response and assess notification obligations without guesswork.", ethicsNote: "Keep the report factual and restricted to the response team. Avoid tracking, confronting, or publicly identifying a suspected person.", steps: "Record the last confirmed possession, whether the device had a passcode and encryption, and any suspicious account activity. Do not investigate beyond your authorization." }
+        ]
+      },
+      {
+        id: "suspicious-email", icon: "✉️", label: "Suspicious email", short: "A message feels off",
+        title: "You received a suspicious email",
+        risk: "Pause before interacting",
+        description: "A message may be trying to steal credentials, deliver malware, or pressure someone into a payment. Don’t click links, open attachments, or reply until you verify it through a trusted channel.",
+        recommendations: [
+          { title: "Report it through your organization’s phishing channel", description: "Use the built-in report button or forward it as an attachment to your security team. Then follow their guidance.", efficiency: 5, feasibility: 5, ethics: 5, effort: "Low effort · 1–2 min", why: "Reporting gives the security team a chance to check the message and protect other people who received it.", ethicsNote: "A private, factual report avoids accusing a sender before the message is verified. Use the approved internal channel rather than sharing it publicly.", steps: "Do not click, reply, or forward the message normally. If a reporting button is available, use it; otherwise ask IT how to submit suspicious email." },
+          { title: "Verify the request using a known contact method", description: "If it asks for money, a password, or sensitive information, contact the supposed sender using a number or address you already trust.", efficiency: 4, feasibility: 4, ethics: 5, effort: "Low effort · 5 min", why: "A separate, trusted channel helps distinguish a genuine request from a spoofed or compromised account.", ethicsNote: "Verification respects the sender and protects their account from a false accusation. Don’t use contact details supplied in the suspicious message.", steps: "Open your directory or a previous known-good conversation and ask whether the request is real. Never share a password or one-time code to verify identity." },
+          { title: "If you clicked, disconnect and tell IT promptly", description: "If you entered a password, approved a sign-in, or opened an unexpected file, stop interacting and contact your IT/security team immediately.", efficiency: 5, feasibility: 4, ethics: 5, effort: "Low effort · Immediate", why: "Early reporting lets responders revoke a session, reset a credential, or check a device before harm spreads.", ethicsNote: "Be honest about what happened and when. A blame-free report is more useful than deleting evidence or attempting unauthorized cleanup.", steps: "Tell IT what you clicked, any details you entered, and when. Don’t delete the message or install cleanup tools unless a responder asks." }
+        ]
+      },
+      {
+        id: "account-access", icon: "🔑", label: "Unexpected sign-in", short: "An account may be compromised",
+        title: "An account may be compromised",
+        risk: "Secure access · Preserve evidence",
+        description: "You noticed a sign-in alert you don’t recognize, or an account is behaving unexpectedly. Use a trusted device and official account-recovery pages; notify your IT team if it’s a work account.",
+        recommendations: [
+          { title: "Secure the account and revoke unknown sessions", description: "From a trusted device, change the password, sign out other sessions, and review recovery details and multi-factor settings.", efficiency: 5, feasibility: 4, ethics: 5, effort: "Low effort · 10–15 min", why: "Revoking unknown sessions and replacing a compromised password can cut off unauthorized access quickly.", ethicsNote: "Only change accounts you own or are authorized to administer. Don’t remove another person’s access or make public accusations.", steps: "Go directly to the service’s official website or app. Set a unique password, revoke sessions, and check for unfamiliar recovery email addresses, devices, or MFA methods." },
+          { title: "Tell your IT or security team", description: "For a work account, use a known support channel. Share the alert, account involved, and any actions you have already taken.", efficiency: 4, feasibility: 5, ethics: 5, effort: "Low effort · 5 min", why: "Responders can check related systems, preserve relevant logs, and prevent further access across connected services.", ethicsNote: "Limit sensitive details to authorized responders. Share the alert itself through a secure internal channel, not a public post.", steps: "Include the time, service, device, and whether you approved a prompt or reused the password elsewhere. Do not forward passwords or authentication codes." },
+          { title: "Review recovery options and connected apps", description: "Look for unfamiliar forwarding rules, linked apps, recovery methods, or recent account changes, and document anything suspicious.", efficiency: 3, feasibility: 4, ethics: 4, effort: "Medium effort · 15 min", why: "Attackers may leave behind ways to regain access even after a password change.", ethicsNote: "Review your own account or work only with explicit authorization. Avoid deleting unfamiliar evidence before IT has a chance to record it.", steps: "Check account security history and connected applications. Capture details of changes you don’t recognize and ask your security team before removing work-related integrations." }
+        ]
+      },
+      {
+        id: "public-wifi", icon: "📶", label: "Working on public Wi-Fi", short: "Using a shared network",
+        title: "You need to work on public Wi-Fi",
+        risk: "Reduce exposure · Keep it simple",
+        description: "Shared networks are not inherently unsafe, but they can be untrusted. Prefer your organization’s approved connection and avoid sensitive work if you cannot protect the session.",
+        recommendations: [
+          { title: "Use your organization’s approved VPN", description: "Connect to the official work VPN before opening sensitive tools, and check that it shows as connected.", efficiency: 4, feasibility: 4, ethics: 5, effort: "Low effort · 2 min", why: "A managed VPN encrypts traffic between your device and your organization’s network, reducing exposure on a shared connection.", ethicsNote: "Use only approved software; unvetted VPN apps may collect browsing data or create new risks. A VPN does not make every site or action safe.", steps: "Confirm the VPN app is provided or recommended by your IT team. If it will not connect, wait for a trusted network before accessing sensitive work." },
+          { title: "Switch to a personal mobile hotspot", description: "If available, use your own cellular hotspot instead of a network you do not control.", efficiency: 4, feasibility: 3, ethics: 5, effort: "Low effort · 2 min", why: "A personal hotspot can reduce exposure to other users on a shared local network.", ethicsNote: "Consider your data plan and battery. Keep the hotspot password private and avoid sharing it more broadly than needed.", steps: "Enable a hotspot with a strong password, connect only your own devices, and turn it off when you are done." },
+          { title: "Defer sensitive tasks until you’re on a trusted network", description: "Read or draft low-risk material offline; wait to approve payments, access sensitive records, or change account settings.", efficiency: 3, feasibility: 4, ethics: 5, effort: "No setup · Depends on task", why: "Reducing what you do on an untrusted network is a straightforward way to limit the impact of a connection issue.", ethicsNote: "This is a low-intrusion choice. If a task is urgent, use your organization’s approved secure-access process rather than improvising.", steps: "Save a local draft if your device is managed and policy allows it. Reconnect securely before sending, uploading, or handling confidential information." }
+        ]
+      }
+    ];
+
+    const sliderIds = ["efficiency", "feasibility", "ethics"];
+    const priorityLabels = ["Low", "Moderate", "High", "Very high", "Essential"];
+    let activeScenario = scenarios[0];
+
+    function renderScenarios() {
+      const list = document.getElementById("scenario-list");
+      list.innerHTML = scenarios.map(s => `
+        <button class="scenario" type="button" data-scenario="${s.id}" aria-pressed="${s.id === activeScenario.id}">
+          <span class="scenario-icon" aria-hidden="true">${s.icon}</span>
+          <span class="scenario-copy"><strong>${s.label}</strong><small>${s.short}</small></span>
+          <span class="select-arrow" aria-hidden="true">›</span>
+        </button>`).join("");
+      list.querySelectorAll(".scenario").forEach(button => button.addEventListener("click", () => {
+        activeScenario = scenarios.find(s => s.id === button.dataset.scenario);
+        list.querySelectorAll(".scenario").forEach(option => {
+          option.setAttribute("aria-pressed", String(option.dataset.scenario === activeScenario.id));
+        });
+        renderResults();
+      }));
+    }
+
+    function getWeights() {
+      return sliderIds.map(id => Number(document.getElementById(id).value));
+    }
+
+    function renderResults() {
+      document.getElementById("scenario-title").textContent = activeScenario.title;
+      document.getElementById("scenario-description").textContent = activeScenario.description;
+      document.getElementById("risk-chip").textContent = activeScenario.risk;
+      const weights = getWeights();
+      const weightTotal = weights.reduce((sum, value) => sum + value, 0);
+      const ranked = activeScenario.recommendations.map((item, originalIndex) => ({
+        ...item,
+        originalIndex,
+        score: (item.efficiency * weights[0] + item.feasibility * weights[1] + item.ethics * weights[2]) / weightTotal
+      })).sort((a, b) => b.score - a.score || a.originalIndex - b.originalIndex);
+
+      document.getElementById("recommendations").innerHTML = ranked.map((item, index) => `
+        <article class="panel recommendation ${index === 0 ? "top-choice" : ""}">
+          <div class="rec-head">
+            <span class="rank-number">${String(index + 1).padStart(2, "0")}</span>
+            <div class="rec-title-wrap"><h3 class="rec-title">${item.title}</h3><p class="rec-description">${item.description}</p></div>
+            <div class="score"><strong>${item.score.toFixed(1)}<span style="font-size:10px;color:#91978c"> / 5</span></strong><span>weighted fit</span></div>
+          </div>
+          ${index === 0 ? '<span class="top-label">Best fit for your priorities</span>' : ""}
+          <div class="factor-row" aria-label="Efficiency ${item.efficiency} out of 5, feasibility ${item.feasibility} out of 5, ethical fit ${item.ethics} out of 5">
+            ${[["Efficiency", item.efficiency], ["Feasibility", item.feasibility], ["Ethical fit", item.ethics]].map(([label, value]) => `
+              <div class="factor"><span class="factor-label">${label}</span><span class="factor-track"><span class="factor-fill" style="width:${value * 20}%"></span></span><span class="factor-value">${value}</span></div>`).join("")}
+          </div>
+          <div class="rec-footer"><span class="effort"><strong>${item.effort.split(" · ")[0]}</strong> · ${item.effort.split(" · ")[1]}</span>
+            <button class="details-button" type="button" aria-expanded="false">Why this option? +</button></div>
+          <div class="details">
+            <p><strong>Why it helps</strong> — ${item.why}</p>
+            <p><strong>Ethical consideration</strong> — ${item.ethicsNote}</p>
+            <p><strong>Getting started</strong> — ${item.steps}</p>
+          </div>
+        </article>`).join("");
+
+      document.querySelectorAll(".details-button").forEach(button => button.addEventListener("click", () => {
+        const details = button.closest(".recommendation").querySelector(".details");
+        const expanded = details.classList.toggle("open");
+        button.setAttribute("aria-expanded", String(expanded));
+        button.textContent = expanded ? "Hide details −" : "Why this option? +";
+      }));
+      document.getElementById("sort-caption").textContent = `Weighted for your priorities · ${weightTotal} total points`;
+    }
+
+    sliderIds.forEach(id => {
+      const slider = document.getElementById(id);
+      slider.addEventListener("input", () => {
+        const value = Number(slider.value);
+        document.getElementById(`${id}-value`).textContent = priorityLabels[value - 1];
+        const percentage = ((value - 1) / 4) * 100;
+        slider.style.background = `linear-gradient(to right, #8ead52 0%, #8ead52 ${percentage}%, #e7e9e1 ${percentage}%, #e7e9e1 100%)`;
+        renderResults();
+      });
+      slider.dispatchEvent(new Event("input"));
+    });
+    document.getElementById("reset-button").addEventListener("click", () => {
+      [4, 4, 5].forEach((value, index) => {
+        document.getElementById(sliderIds[index]).value = value;
+        document.getElementById(sliderIds[index]).dispatchEvent(new Event("input"));
+      });
+    });
+    renderScenarios();
+    renderResults();
+  </script>
+</body>
+</html>
