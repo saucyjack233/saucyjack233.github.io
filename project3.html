@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080d09">
+  <meta name="description" content="An interactive student guide to computing safety, law, and ethics for Performance Standard 5.3.">
+  <title>Computing with Care — Standard 5.3</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --paper: #080d09;
+      --white: #111a13;
+      --ink: #eff7ef;
+      --muted: #a3b2a4;
+      --line: #29382b;
+      --green: #a7f36c;
+      --green-dark: #72bd4b;
+      --forest: #14291a;
+      --mint: #16271b;
+      --blue: #18271b;
+      --amber: #1d2a19;
+      --rose: #301b19;
+      --shadow: 0 14px 40px rgba(0, 0, 0, .24);
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-size: 15px; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    button { font: inherit; }
+    :focus-visible { outline: 3px solid var(--green); outline-offset: 3px; }
+    .topbar { height: 72px; padding: 0 max(24px, calc((100vw - 1160px) / 2)); display: flex; align-items: center; justify-content: space-between; background: rgba(8,13,9,.88); border-bottom: 1px solid var(--line); }
+    .brand { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 750; letter-spacing: -.35px; }
+    .brand-mark { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 11px; background: var(--forest); color: var(--green); font-size: 19px; }
+    .brand small { display: block; margin-top: 2px; color: #9aaa9a; font-size: 9px; letter-spacing: 1.15px; }
+    .nav-links { display: flex; align-items: center; gap: 25px; color: var(--muted); font-size: 12px; }
+    .nav-links a { text-decoration: none; }
+    .nav-links a:hover { color: var(--ink); }
+    .standard-tag { padding: 8px 11px; border: 1px solid #355333; border-radius: 99px; background: #142317; color: #b9f28e; font-weight: 700; }
+    main { width: min(1160px, calc(100% - 48px)); margin: auto; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1fr) 310px; gap: 40px; align-items: center; padding: 62px 0 45px; }
+    .eyebrow { margin: 0 0 14px; color: #a7df7b; font-size: 11px; font-weight: 800; letter-spacing: 1.6px; text-transform: uppercase; }
+    h1 { max-width: 720px; margin: 0; font-size: clamp(38px, 6vw, 64px); line-height: 1.02; letter-spacing: -3.2px; font-weight: 700; }
+    .hero-copy { max-width: 650px; margin: 18px 0 0; color: var(--muted); font-size: 17px; line-height: 1.65; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 11px; margin-top: 25px; }
+    .button { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 0 16px; border: 1px solid transparent; border-radius: 10px; font-weight: 700; font-size: 13px; text-decoration: none; cursor: pointer; transition: transform .16s, background .16s; }
+    .button:hover { transform: translateY(-1px); }
+    .button-primary { background: var(--forest); color: white; }
+    .button-primary:hover { background: #244a2c; }
+    .button-secondary { border-color: var(--line); background: var(--white); color: var(--ink); }
+    .hero-card { position: relative; overflow: hidden; padding: 24px; border-radius: 18px; background: var(--forest); color: white; box-shadow: var(--shadow); }
+    .hero-card::after { content: ""; position: absolute; width: 150px; height: 150px; right: -62px; top: -68px; border: 1px solid rgba(167,243,108,.35); border-radius: 50%; box-shadow: 0 0 0 20px rgba(167,243,108,.08), 0 0 0 42px rgba(167,243,108,.04); }
+    .hero-card-label { color: #c1d9c0; font-size: 10px; font-weight: 750; letter-spacing: 1.3px; text-transform: uppercase; }
+    .hero-card blockquote { position: relative; z-index: 1; margin: 17px 0; font-size: 21px; line-height: 1.38; letter-spacing: -.45px; }
+    .hero-card p { position: relative; z-index: 1; margin: 0; color: #c1d9c0; font-size: 12px; line-height: 1.55; }
+    .section { padding: 45px 0; scroll-margin-top: 24px; }
+    .section-head { display: flex; justify-content: space-between; align-items: end; gap: 24px; margin-bottom: 21px; }
+    .section-kicker { margin: 0 0 8px; color: #a3d77b; font-size: 10px; font-weight: 800; letter-spacing: 1.4px; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(25px, 3.5vw, 34px); line-height: 1.15; letter-spacing: -1.15px; }
+    .section-intro { max-width: 480px; margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .objective-strip { display: grid; grid-template-columns: 42px 1fr; gap: 13px; align-items: start; padding: 17px 19px; border: 1px solid #344c30; border-radius: 13px; background: #111b12; }
+    .objective-icon { width: 37px; height: 37px; display: grid; place-items: center; border-radius: 11px; background: #233b20; font-size: 17px; }
+    .objective-strip strong { display: block; margin: 1px 0 4px; font-size: 13px; }
+    .objective-strip p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
+    .concept-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 15px; }
+    .concept-card { min-height: 100%; padding: 21px; border: 1px solid var(--line); border-radius: 15px; background: var(--white); box-shadow: var(--shadow); }
+    .concept-top { display: flex; align-items: center; gap: 11px; margin-bottom: 13px; }
+    .concept-icon { width: 39px; height: 39px; display: grid; place-items: center; border-radius: 12px; font-size: 19px; }
+    .safety .concept-icon { background: var(--mint); }
+    .law .concept-icon { background: var(--blue); }
+    .ethics .concept-icon { background: var(--amber); }
+    .concept-card h3 { margin: 0; font-size: 18px; letter-spacing: -.4px; }
+    .concept-card > p { min-height: 57px; margin: 0 0 14px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .concept-card ul { display: grid; gap: 9px; margin: 0; padding: 14px 0 0; border-top: 1px solid var(--line); list-style: none; }
+    .concept-card li { position: relative; padding-left: 17px; color: #c5d2c6; font-size: 11px; line-height: 1.5; }
+    .concept-card li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 800; }
+    .law-examples { margin-top: 17px; padding: 20px; border: 1px solid #344c30; border-radius: 14px; background: #111b12; }
+    .law-examples h3 { margin: 0; font-size: 16px; }
+    .law-examples-intro { margin: 7px 0 15px; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .law-example-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .law-example { padding: 15px; border: 1px solid #2b3b2c; border-radius: 11px; background: #151f17; }
+    .law-example h4 { margin: 0 0 7px; font-size: 13px; line-height: 1.45; }
+    .law-example p { margin: 0; color: #bfcebf; font-size: 11px; line-height: 1.6; }
+    .law-example a { display: inline-block; margin-top: 9px; color: #b4e991; font-size: 11px; font-weight: 700; text-underline-offset: 3px; }
+    .remember { display: flex; align-items: center; gap: 12px; margin-top: 15px; padding: 14px 17px; border-radius: 12px; background: #132016; color: #c2d0c3; font-size: 12px; line-height: 1.55; }
+    .remember strong { color: var(--green); }
+    .scenario-section { margin: 22px -30px 0; padding: 46px 30px; border-radius: 22px; background: #101b12; }
+    .scenario-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .scenario-card { padding: 20px; border: 1px solid #2b3b2c; border-radius: 14px; background: #151f17; }
+    .scenario-number { color: #a3cf81; font-size: 10px; font-weight: 800; letter-spacing: 1px; }
+    .scenario-card h3 { margin: 10px 0 8px; font-size: 15px; letter-spacing: -.25px; }
+    .scenario-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .scenario-answer { margin-top: 14px !important; padding-top: 12px; border-top: 1px solid var(--line); color: #bfcebf !important; }
+    .scenario-answer strong { color: #b2e68b; }
+    .quiz-section { display: grid; grid-template-columns: minmax(220px, .75fr) minmax(0, 1.5fr); gap: 38px; align-items: start; }
+    .quiz-aside { position: sticky; top: 24px; }
+    .quiz-aside p { margin: 12px 0 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+    .quiz-card { padding: 23px; border: 1px solid var(--line); border-radius: 16px; background: var(--white); box-shadow: var(--shadow); }
+    .quiz-progress-line { height: 6px; overflow: hidden; margin: 0 0 19px; border-radius: 99px; background: #253327; }
+    .quiz-progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--green); transition: width .25s; }
+    .quiz-meta { display: flex; justify-content: space-between; color: #a5b3a6; font-size: 10px; font-weight: 700; letter-spacing: .55px; text-transform: uppercase; }
+    .quiz-question { margin: 12px 0 17px; font-size: 18px; line-height: 1.4; letter-spacing: -.35px; }
+    .answers { display: grid; gap: 9px; }
+    .answer { display: flex; align-items: flex-start; gap: 11px; width: 100%; padding: 12px; border: 1px solid #334235; border-radius: 10px; background: #121b14; color: var(--ink); text-align: left; line-height: 1.45; cursor: pointer; }
+    .answer:hover:not(:disabled) { border-color: #76a85c; background: #18251a; }
+    .answer:disabled { cursor: default; opacity: 1; }
+    .answer-mark { width: 21px; height: 21px; flex: 0 0 21px; display: grid; place-items: center; border: 1px solid #405143; border-radius: 7px; color: #acbbad; font-size: 11px; font-weight: 750; }
+    .answer.correct { border-color: #72a957; background: #182719; }
+    .answer.correct .answer-mark { border-color: #72a957; background: #72a957; color: #081009; }
+    .answer.incorrect { border-color: #80534b; background: #281b19; }
+    .answer.incorrect .answer-mark { border-color: #80534b; background: #80534b; color: white; }
+    .feedback { min-height: 47px; margin: 13px 0 0; padding: 10px 12px; border-radius: 9px; background: #172119; color: #c1cfc2; font-size: 12px; line-height: 1.5; }
+    .feedback:empty { display: none; }
+    .quiz-footer { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-top: 15px; }
+    .quiz-footer button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+    .quiz-result { display: none; padding: 21px; border: 1px solid #344c30; border-radius: 13px; background: #111b12; }
+    .quiz-result.show { display: block; }
+    .quiz-result h3 { margin: 0 0 8px; font-size: 20px; }
+    .quiz-result p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+    .takeaway { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .takeaway-card { padding: 18px; border-radius: 13px; background: var(--white); border: 1px solid var(--line); }
+    .takeaway-card strong { display: block; margin-bottom: 7px; font-size: 13px; }
+    .takeaway-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .source-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .source-card { padding: 18px; border: 1px solid var(--line); border-radius: 13px; background: var(--white); }
+    .source-card h3 { margin: 0 0 7px; font-size: 14px; line-height: 1.45; }
+    .source-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+    .source-card a { color: #b4e991; font-weight: 700; text-underline-offset: 3px; }
+    .notice { margin-top: 15px; padding: 13px 15px; border-left: 3px solid #75a94f; border-radius: 0 9px 9px 0; background: #151f16; color: #c3d0c2; font-size: 11px; line-height: 1.6; }
+    footer { display: flex; justify-content: space-between; gap: 20px; margin-top: 34px; padding: 19px 0 25px; border-top: 1px solid var(--line); color: #9aaa9a; font-size: 10px; }
+    @media (max-width: 760px) {
+      .topbar { height: 64px; padding: 0 20px; }
+      .nav-links { gap: 13px; }
+      .nav-links a:not(.standard-tag) { display: none; }
+      main { width: min(100% - 36px, 600px); }
+      .hero { grid-template-columns: 1fr; gap: 23px; padding: 45px 0 35px; }
+      .hero-card { max-width: 430px; }
+      .section-head { display: block; }
+      .section-intro { margin-top: 11px; }
+      .concept-grid, .scenario-grid { grid-template-columns: 1fr; }
+      .concept-card > p { min-height: 0; }
+      .law-example-grid { grid-template-columns: 1fr; }
+      .scenario-section { margin-right: -12px; margin-left: -12px; padding: 35px 16px; }
+      .quiz-section { grid-template-columns: 1fr; gap: 19px; }
+      .quiz-aside { position: static; }
+    }
+    @media (max-width: 480px) {
+      main { width: calc(100% - 30px); }
+      .standard-tag { padding: 7px 9px; font-size: 10px; }
+      h1 { letter-spacing: -2px; }
+      .hero-copy { font-size: 15px; }
+      .section { padding: 34px 0; }
+      .takeaway { grid-template-columns: 1fr; }
+      .source-list { grid-template-columns: 1fr; }
+      .quiz-card { padding: 17px; }
+      footer { flex-direction: column; gap: 7px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="Computing with Care home">
+      <span class="brand-mark" aria-hidden="true">✳</span>
+      <span>computing with care<small>SAFETY · LAW · ETHICS</small></span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#ideas">The three ideas</a>
+      <a href="#scenarios">In practice</a>
+      <a href="#check">Knowledge check</a>
+      <a href="#sources">Sources</a>
+      <span class="standard-tag">Standard 5.3</span>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">A student guide to responsible computing</p>
+        <h1>Good technology starts with good judgment.</h1>
+        <p class="hero-copy">Learn how safety, law, and ethics shape the way we design, use, and share computing technologies — then test your thinking with real-world choices.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#ideas">Explore the standard <span aria-hidden="true">↓</span></a>
+          <a class="button button-secondary" href="#check">Jump to the knowledge check</a>
+        </div>
+      </div>
+      <aside class="hero-card" aria-label="Guiding question">
+        <span class="hero-card-label">The guiding question</span>
+        <blockquote>“Can we do it?” is only the beginning.</blockquote>
+        <p>Also ask: Is it safe? Is it allowed? Is it fair and respectful?</p>
+      </aside>
+    </section>
+
+    <section class="section" id="ideas" aria-labelledby="ideas-title">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Performance Standard 5.3</p>
+          <h2 id="ideas-title">Three lenses. One responsible choice.</h2>
+        </div>
+        <p class="section-intro">Computing decisions can affect people, communities, and the world around us. Use all three lenses before you build, share, or use technology.</p>
+      </div>
+      <div class="objective-strip">
+        <span class="objective-icon" aria-hidden="true">🎯</span>
+        <div>
+          <strong>What you’ll be able to do</strong>
+          <p>Explain how safety, laws, and ethical principles apply to computing situations — and describe a responsible next step.</p>
+        </div>
+      </div>
+      <div class="concept-grid">
+        <article class="concept-card safety">
+          <div class="concept-top"><span class="concept-icon" aria-hidden="true">🛟</span><h3>Safety</h3></div>
+          <p>Prevent harm to people, devices, data, and communities. Safety includes physical well-being and protection from digital risks.</p>
+          <ul>
+            <li>Use strong, unique passwords and multi-factor authentication.</li>
+            <li>Protect personal information; pause before clicking unfamiliar links.</li>
+            <li>Consider ergonomics, screen breaks, accessibility, and online well-being.</li>
+          </ul>
+        </article>
+        <article class="concept-card law">
+          <div class="concept-top"><span class="concept-icon" aria-hidden="true">⚖️</span><h3>Law</h3></div>
+          <p>Laws are enforceable rules. Computing work must respect legal rights, permissions, and responsibilities.</p>
+          <ul>
+            <li>Respect copyright, software licenses, and creators’ work.</li>
+            <li>Handle personal data according to privacy rules and school or workplace policy.</li>
+            <li>Access systems only with permission; never bypass controls or misuse accounts.</li>
+          </ul>
+        </article>
+        <article class="concept-card ethics">
+          <div class="concept-top"><span class="concept-icon" aria-hidden="true">🧭</span><h3>Ethics</h3></div>
+          <p>Ethics means reasoning about what is fair, respectful, and responsible — including when a choice may be legal but still harmful.</p>
+          <ul>
+            <li>Be honest and transparent about how a system works and uses data.</li>
+            <li>Look for bias; treat people fairly and make technology accessible.</li>
+            <li>Think about who benefits, who may be harmed, and who is accountable.</li>
+          </ul>
+        </article>
+      </div>
+      <aside class="law-examples" aria-labelledby="law-examples-title">
+        <h3 id="law-examples-title">Specific U.S. laws discussed in this lesson</h3>
+        <p class="law-examples-intro">These are examples of U.S. federal law behind the copyright, school-record privacy, and authorized-access guidance above. They do not cover every state, country, school rule, or situation.</p>
+        <div class="law-example-grid">
+          <article class="law-example">
+            <h4>Copyright Act of 1976, as amended — 17 U.S.C. §§ 106–107</h4>
+            <p>Section 106 describes copyright owners’ exclusive rights, including reproduction and distribution. Section 107 provides a fact-specific fair-use exception; classroom or educational use is not automatically fair use.</p>
+            <a href="https://www.copyright.gov/title17/92chap1.html" target="_blank" rel="noopener noreferrer">U.S. Copyright Office: Title 17, Chapter 1</a>
+          </article>
+          <article class="law-example">
+            <h4>Family Educational Rights and Privacy Act (FERPA) — 20 U.S.C. § 1232g; 34 C.F.R. Part 99</h4>
+            <p>FERPA and its regulations address access to and disclosure of education records by covered educational agencies and institutions. It is not a general privacy law for every kind of student data.</p>
+            <a href="https://studentprivacy.ed.gov/ferpa" target="_blank" rel="noopener noreferrer">U.S. Department of Education: FERPA</a>
+          </article>
+          <article class="law-example">
+            <h4>Computer Fraud and Abuse Act (CFAA) — 18 U.S.C. § 1030</h4>
+            <p>The CFAA addresses certain computer access without authorization. Whether particular conduct violates the law depends on the facts and applicable law; do not test access to an account or system without permission.</p>
+            <a href="https://www.justice.gov/jm/jm-9-48000-computer-fraud" target="_blank" rel="noopener noreferrer">U.S. Department of Justice: CFAA guidance</a>
+          </article>
+        </div>
+      </aside>
+      <div class="remember"><span aria-hidden="true">💡</span><span><strong>Keep the ideas distinct:</strong> laws set legal boundaries; ethics helps us judge what we ought to do; safety focuses on preventing harm. A responsible choice considers all three.</span></div>
+    </section>
+
+    <section class="section scenario-section" id="scenarios" aria-labelledby="scenario-title">
+      <div class="section-head">
+        <div>
+          <p class="section-kicker">Put it into practice</p>
+          <h2 id="scenario-title">Pause. Consider. Choose.</h2>
+        </div>
+        <p class="section-intro">For each situation, notice how the three lenses work together. Often, the best first step is to stop, ask, or check a trusted policy.</p>
+      </div>
+      <div class="scenario-grid">
+        <article class="scenario-card">
+          <span class="scenario-number">01 — SHARING</span>
+          <h3>A classmate sends you a paid app</h3>
+          <p>They say it’s fine to copy the installer so your project can finish faster.</p>
+          <p class="scenario-answer"><strong>Think it through:</strong> Safety — could the file contain malware? Law — does the license allow copying? Ethics — is it fair to the creator? Use an authorized source and ask your teacher about permitted alternatives.</p>
+        </article>
+        <article class="scenario-card">
+          <span class="scenario-number">02 — PERSONAL DATA</span>
+          <h3>Your project collects student birthdays</h3>
+          <p>You only need the information to personalize a demo, but you have not asked anyone.</p>
+          <p class="scenario-answer"><strong>Think it through:</strong> Safety — could the data expose someone? Law and policy — do you have permission to collect it? Ethics — is it necessary? Use sample data, or ask for consent and collect only what you truly need.</p>
+        </article>
+        <article class="scenario-card">
+          <span class="scenario-number">03 — ACCESS</span>
+          <h3>You spot a way into a restricted account</h3>
+          <p>You want to test whether the weakness is real, even though the account is not yours.</p>
+          <p class="scenario-answer"><strong>Think it through:</strong> Safety — testing may expose or alter data. Law — accessing an account without authorization can break the rules or law. Ethics — curiosity is not consent. Stop and report it privately to a teacher or administrator.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section quiz-section" id="check" aria-labelledby="quiz-title">
+      <div class="quiz-aside">
+        <p class="section-kicker">Your turn</p>
+        <h2 id="quiz-title">Knowledge check</h2>
+        <p>Choose the best response to each situation. You’ll get a short explanation after every answer.</p>
+        <p><strong>Try to explain your reasoning:</strong> Which lens — safety, law, or ethics — helped you decide?</p>
+      </div>
+      <div class="quiz-card" aria-live="polite">
+        <div id="quiz-content">
+          <div class="quiz-meta"><span id="question-count">Question 1 of 4</span><span id="score-count">Score: 0</span></div>
+          <div class="quiz-progress-line" role="progressbar" aria-label="Quiz progress" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0">
+            <div class="quiz-progress-fill" id="progress-fill"></div>
+          </div>
+          <h3 class="quiz-question" id="question-text"></h3>
+          <div class="answers" id="answers"></div>
+          <p class="feedback" id="feedback" role="status"></p>
+          <div class="quiz-footer">
+            <span id="answer-hint" class="section-intro">Choose one answer to continue.</span>
+            <button class="button button-primary" id="next-button" type="button" disabled>Next question <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+        <div class="quiz-result" id="quiz-result" role="status">
+          <h3 id="result-title"></h3>
+          <p id="result-copy"></p>
+          <button class="button button-secondary" id="retry-button" type="button" style="margin-top:16px">Try again</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="takeaway-title">
+      <div class="section-head">
+        <div><p class="section-kicker">Take it with you</p><h2 id="takeaway-title">A quick decision check</h2></div>
+      </div>
+      <div class="takeaway">
+        <article class="takeaway-card"><strong>Before you act</strong><p>Do I have permission? Could this expose or harm anyone? Am I respecting privacy, creators, and other people’s rights?</p></article>
+        <article class="takeaway-card"><strong>If you’re unsure</strong><p>Stop before accessing, sharing, or collecting data. Ask a trusted teacher or administrator and follow the relevant policy.</p></article>
+      </div>
+      <p class="notice"><strong>Learning note:</strong> The named laws are U.S. federal examples. State, local, and other countries’ laws, as well as school policies, may differ. This page is an educational introduction, not legal advice; check the rules that apply to your situation.</p>
+    </section>
+    <section class="section" id="sources" aria-labelledby="sources-title">
+      <div class="section-head">
+        <div><p class="section-kicker">References</p><h2 id="sources-title">Sources &amp; further reading</h2></div>
+        <p class="section-intro">Official government references for the U.S. laws explained above, plus cybersecurity and professional ethics guidance.</p>
+      </div>
+      <div class="source-list">
+        <article class="source-card">
+          <h3>1. Cybersecurity and Infrastructure Security Agency (CISA). “Secure Our World.”</h3>
+          <p>Practical guidance on using strong passwords, turning on multifactor authentication, recognizing phishing, and updating software. <a href="https://www.cisa.gov/secure-our-world" target="_blank" rel="noopener noreferrer">Read the CISA guidance</a>.</p>
+        </article>
+        <article class="source-card">
+          <h3>2. Association for Computing Machinery (ACM). “ACM Code of Ethics and Professional Conduct” (2018).</h3>
+          <p>Professional principles for avoiding harm, respecting privacy, being fair, and following rules for computing work. <a href="https://www.acm.org/code-of-ethics" target="_blank" rel="noopener noreferrer">Read the ACM Code of Ethics</a>.</p>
+        </article>
+        <article class="source-card">
+          <h3>3. U.S. Copyright Office. Copyright Act, Title 17, Chapter 1.</h3>
+          <p>Official text including copyright owners’ exclusive rights (section 106) and fair use (section 107). <a href="https://www.copyright.gov/title17/92chap1.html" target="_blank" rel="noopener noreferrer">Read Title 17, Chapter 1</a>.</p>
+        </article>
+        <article class="source-card">
+          <h3>4. U.S. Department of Education. Family Educational Rights and Privacy Act (FERPA).</h3>
+          <p>Official FERPA information and links to its statute and implementing regulations, 34 C.F.R. Part 99. <a href="https://studentprivacy.ed.gov/ferpa" target="_blank" rel="noopener noreferrer">Read the Department of Education’s FERPA page</a>.</p>
+        </article>
+        <article class="source-card">
+          <h3>5. U.S. Department of Justice. “Computer Fraud and Abuse” (CFAA guidance).</h3>
+          <p>Identifies the CFAA as 18 U.S.C. § 1030 and explains the Department’s prosecution guidance. <a href="https://www.justice.gov/jm/jm-9-48000-computer-fraud" target="_blank" rel="noopener noreferrer">Read the DOJ guidance</a>.</p>
+        </article>
+      </div>
+    </section>
+    <footer><span>COMPUTING WITH CARE · PERFORMANCE STANDARD 5.3</span><span>Think critically. Act responsibly. Keep people in mind.</span></footer>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        prompt: "You want to use an image you found online in a class website. What is the best first step?",
+        answers: [
+          "Use it because anything online is free to reuse.",
+          "Check its license or permission, and credit the creator as required.",
+          "Remove the creator’s name so the page looks cleaner."
+        ],
+        correct: 1,
+        explanation: "Online availability does not automatically grant reuse rights. Check the license, get permission when needed, and follow attribution terms."
+      },
+      {
+        prompt: "A class project asks for everyone’s home address, but the feature works without it. What should you do?",
+        answers: [
+          "Collect it just in case it is useful later.",
+          "Post the addresses only where classmates can see them.",
+          "Avoid collecting unnecessary personal data and use sample information instead."
+        ],
+        correct: 2,
+        explanation: "Collecting less data reduces privacy and safety risks. Use only information that is necessary and authorized."
+      },
+      {
+        prompt: "You notice a password written on a classroom computer. What is the most responsible response?",
+        answers: [
+          "Try it to see which account it opens.",
+          "Leave it alone and privately tell the owner or a trusted administrator.",
+          "Share a photo of it with your friends as a warning."
+        ],
+        correct: 1,
+        explanation: "Do not use or spread someone else’s credentials. Report the exposure privately so the password can be changed safely."
+      },
+      {
+        prompt: "A tool is allowed by school rules, but it produces unfair results for some students. What should you consider?",
+        answers: [
+          "Ethics: question the impact, fairness, and how the system should be reviewed.",
+          "Nothing — if it is allowed, it must be fair.",
+          "Hide the results so nobody notices."
+        ],
+        correct: 0,
+        explanation: "Legal or policy permission does not automatically make a system ethical. Consider who is affected, examine bias, and raise concerns responsibly."
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let answered = false;
+    const answerLetters = ["A", "B", "C"];
+    const questionText = document.getElementById("question-text");
+    const answersElement = document.getElementById("answers");
+    const feedback = document.getElementById("feedback");
+    const nextButton = document.getElementById("next-button");
+    const progress = document.querySelector('[role="progressbar"]');
+
+    function renderQuestion() {
+      const question = questions[currentQuestion];
+      answered = false;
+      document.getElementById("question-count").textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+      document.getElementById("score-count").textContent = `Score: ${score}`;
+      questionText.textContent = question.prompt;
+      feedback.textContent = "";
+      document.getElementById("answer-hint").textContent = "Choose one answer to continue.";
+      nextButton.disabled = true;
+      nextButton.innerHTML = currentQuestion === questions.length - 1
+        ? 'See your result <span aria-hidden="true">→</span>'
+        : 'Next question <span aria-hidden="true">→</span>';
+      answersElement.replaceChildren();
+      question.answers.forEach((answer, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "answer";
+        button.innerHTML = `<span class="answer-mark">${answerLetters[index]}</span><span></span>`;
+        button.lastElementChild.textContent = answer;
+        button.addEventListener("click", () => chooseAnswer(index));
+        answersElement.append(button);
+      });
+      const completed = currentQuestion;
+      progress.setAttribute("aria-valuenow", String(completed));
+      document.getElementById("progress-fill").style.width = `${(completed / questions.length) * 100}%`;
+    }
+
+    function chooseAnswer(selected) {
+      if (answered) return;
+      answered = true;
+      const question = questions[currentQuestion];
+      const buttons = answersElement.querySelectorAll(".answer");
+      buttons.forEach((button, index) => {
+        button.disabled = true;
+        if (index === question.correct) {
+          button.classList.add("correct");
+          button.querySelector(".answer-mark").textContent = "✓";
+        } else if (index === selected) {
+          button.classList.add("incorrect");
+          button.querySelector(".answer-mark").textContent = "×";
+        }
+      });
+      if (selected === question.correct) score += 1;
+      document.getElementById("score-count").textContent = `Score: ${score}`;
+      feedback.textContent = `${selected === question.correct ? "Correct." : "Not quite."} ${question.explanation}`;
+      document.getElementById("answer-hint").textContent = selected === question.correct
+        ? "Nice work — ready for the next one?"
+        : "Review the explanation, then continue.";
+      nextButton.disabled = false;
+    }
+
+    function showResult() {
+      document.getElementById("quiz-content").hidden = true;
+      const result = document.getElementById("quiz-result");
+      result.classList.add("show");
+      const percentage = Math.round((score / questions.length) * 100);
+      document.getElementById("result-title").textContent = `You got ${score} out of ${questions.length} (${percentage}%).`;
+      document.getElementById("result-copy").textContent = score === questions.length
+        ? "Excellent work. You’re using the safety, law, and ethics lenses together. Keep applying them to new situations."
+        : "Good practice. Revisit the three lenses above, then try again. A responsible decision considers permissions, possible harm, and fairness.";
+    }
+
+    nextButton.addEventListener("click", () => {
+      if (!answered) return;
+      if (currentQuestion === questions.length - 1) {
+        showResult();
+        return;
+      }
+      currentQuestion += 1;
+      renderQuestion();
+    });
+
+    document.getElementById("retry-button").addEventListener("click", () => {
+      currentQuestion = 0;
+      score = 0;
+      document.getElementById("quiz-content").hidden = false;
+      document.getElementById("quiz-result").classList.remove("show");
+      renderQuestion();
+    });
+
+    renderQuestion();
+  </script>
+</body>
+</html>
